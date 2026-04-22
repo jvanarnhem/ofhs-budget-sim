@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adulting 2.0: The 24-Month Challenge</title>
+    <title>Adulting 101: The 24-Month QR Challenge</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,62 +13,65 @@
             <div class="top-nav">
                 <h2 id="month-display">Month 1 / 24</h2>
                 <div id="happiness-zone">
-                    <span>Mood:</span>
+                    <span>Happiness:</span>
                     <div class="progress-bg"><div id="happiness-bar"></div></div>
                 </div>
             </div>
             <div class="stats-bar">
-                <div class="stat-box">Bank: <span id="bank-balance">$0</span></div>
-                <div class="stat-box">Debt: <span id="debt-balance">$0</span></div>
+                <div class="stat-box">Bank Account: <span id="bank-balance">$0</span></div>
+                <div class="stat-box">Credit Debt: <span id="debt-balance" class="danger-text">$0</span></div>
                 <div class="stat-box">Net Income: <span id="income-display">$0</span></div>
             </div>
         </header>
 
         <main id="setup-screen">
             <div class="card">
-                <h3>Select Profession & Lifestyle</h3>
-                <label>Career:</label>
+                <h2>Life Setup</h2>
+                <label>Choose a Career Path:</label>
                 <select id="career-select"></select>
                 
-                <label>Housing:</label>
+                <label>Where will you live?</label>
                 <select id="housing-select">
-                    <option value="2000" data-h="20">Studio Apt ($2,000)</option>
-                    <option value="900" data-h="5">Shared House ($900)</option>
-                    <option value="0" data-h="-15">Parents ($0)</option>
+                    <option value="2200" data-h="25">Luxury Studio ($2,200/mo)</option>
+                    <option value="1200" data-h="10">Small 1-Bedroom ($1,200/mo)</option>
+                    <option value="700" data-h="-5">Room with 3 Roommates ($700/mo)</option>
+                    <option value="0" data-h="-20">Parents' Basement ($0/mo)</option>
                 </select>
 
-                <label>Car Loan (Principal):</label>
-                <input type="number" id="car-principal" value="20000" step="1000">
-                <p class="small">4.5% APR / 5 Year Term</p>
+                <label>Car Loan Principal (Price of Car):</label>
+                <input type="number" id="car-principal" value="15000" step="1000">
+                <p class="small">Calculated at 5% interest over 60 months.</p>
                 
-                <button id="start-btn">Begin Simulation</button>
+                <button id="start-btn">Start Simulation</button>
             </div>
         </main>
 
         <main id="sim-screen" class="hidden">
             <div class="game-grid">
-                <div class="card" id="decisions-card">
-                    <h3>Monthly Opportunities</h3>
-                    <p>Choose your extras for this month:</p>
+                <div class="card">
+                    <h3>Monthly Choices</h3>
+                    <p class="small">Life happens. Select which opportunities you'll take this month:</p>
                     <div id="choices-container">
                         </div>
                 </div>
 
                 <div class="card">
                     <h3>Financial Ledger</h3>
-                    <div id="ledger-details" class="small"></div>
+                    <div id="ledger-details">
+                        </div>
                 </div>
             </div>
             
-            <button id="next-month-btn">Finalize Month</button>
+            <button id="next-month-btn">Finalize Month & Pay Bills</button>
             <div id="event-log"></div>
         </main>
 
         <main id="results-screen" class="hidden">
-            <div class="card">
-                <h1>24-Month Retrospective</h1>
+            <div class="card" style="text-align: center;">
+                <h1>Simulation Complete</h1>
                 <div id="final-stats"></div>
-                <button onclick="location.reload()">Try Again</button>
+                <hr>
+                <button onclick="location.reload()">Reset Simulation</button>
             </div>
         </main>
     </div>
