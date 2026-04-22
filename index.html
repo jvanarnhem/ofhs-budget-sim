@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>Adulting Sim: QR Edition</h1>
+            <div id="stats-bar">
+                <div class="stat">Bank: <span id="balance">$0</span></div>
+                <div class="stat">Happiness: <span id="happiness">100%</span></div>
+                <div class="stat">Debt: <span id="debt">$0</span></div>
+            </div>
+        </header>
+
+        <main>
+            <section id="setup">
+                </section>
+            
+            <section id="visuals">
+                <div class="progress-container">
+                    <label>Budget Stress</label>
+                    <div id="stress-bar"></div>
+                </div>
+            </section>
+        </main>
+
+        <div id="log"></div>
+        <button id="next-month">End Month & Pay Bills</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
