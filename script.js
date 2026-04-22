@@ -1,110 +1,164 @@
 const professions = [
-    { name: "Registered Nurse", gross: 6500, tax: 0.22 },
-    { name: "Public School Teacher", gross: 4200, tax: 0.18 },
-    { name: "Electrician", gross: 5200, tax: 0.20 },
-    { name: "Software Engineer", gross: 9500, tax: 0.28 },
-    { name: "Graphic Designer", gross: 4000, tax: 0.15 },
-    { name: "Retail Manager", gross: 3500, tax: 0.12 },
-    { name: "Social Worker", gross: 3800, tax: 0.15 },
-    { name: "Construction Foreman", gross: 5800, tax: 0.20 },
-    { name: "Accountant", gross: 6200, tax: 0.22 },
-    { name: "Barista / Freelancer", gross: 2800, tax: 0.10 }
+    { name: "Teacher", gross: 4200, tax: 0.18 },
+    { name: "Software Engineer", gross: 8500, tax: 0.28 },
+    { name: "Nurse", gross: 6200, tax: 0.22 },
+    { name: "Barista", gross: 2600, tax: 0.10 },
+    { name: "Electrician", gross: 5500, tax: 0.20 },
+    { name: "Designer", gross: 4800, tax: 0.18 },
+    { name: "Retail Manager", gross: 3800, tax: 0.15 },
+    { name: "Chef", gross: 4000, tax: 0.15 },
+    { name: "Analyst", gross: 7000, tax: 0.25 },
+    { name: "Social Worker", gross: 4100, tax: 0.15 },
+    { name: "Mechanic", gross: 5200, tax: 0.20 },
+    { name: "Artist", gross: 3000, tax: 0.12 }
+];
+
+const extraChoices = [
+    { id: 'vacation', text: "Weekend Trip", cost: 600, happy: 20 },
+    { id: 'clothes', text: "New Wardrobe Pieces", cost: 150, happy: 8 },
+    { id: 'concert', text: "Concert Tickets", cost: 200, happy: 12 },
+    { id: 'dining', text: "Fancy Dinner Out", cost: 100, happy: 5 },
+    { id: 'gaming', text: "New Video Game/Sub", cost: 70, happy: 6 },
+    { id: 'gym', text: "Premium Gym Class", cost: 80, happy: 7 }
 ];
 
 let state = {
-    month: 1,
-    bank: 2000, // Starting savings
-    debt: 0,
-    happiness: 80,
-    job: null,
-    housing: 0,
-    carPayment: 0,
-    fixedCosts: 250 // Utilities, Phone, etc.
+    month: 1, bank: 1500, debt: 0, happiness: 75,
+    job: null, housing: 0, carPay: 0, 
+    totalEarned: 0, totalSpent: 0, history: []
 };
 
-// UI Elements
-const careerSelect = document.getElementById('career-select');
-const eventLog = document.getElementById('event-log');
-
-// Initialization
-professions.forEach((p, index) => {
+// Initialize Profession List
+const careerSel = document.getElementById('career-select');
+professions.forEach((p, i) => {
     let opt = document.createElement('option');
-    opt.value = index;
-    opt.textContent = `${p.name} ($${p.gross}/mo)`;
-    careerSelect.appendChild(opt);
+    opt.value = i;
+    opt.textContent = p.name;
+    careerSel.appendChild(opt);
 });
 
-// Amortization Formula: M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1]
-function calculateMonthlyPayment(principal, annualRate, years) {
-    if (principal <= 100) return principal; // Handling bus pass/cash
-    let i = annualRate / 12;
-    let n = years * 12;
-    let payment = principal * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
-    return payment;
-}
-
+// Start Game
 document.getElementById('start-btn').addEventListener('click', () => {
-    const pIndex = careerSelect.value;
-    state.job = professions[pIndex];
+    state.job = professions[careerSel.value];
     state.housing = parseFloat(document.getElementById('housing-select').value);
     
-    // Calculate Car Amortization (4.5% interest over 5 years)
-    let carPrincipal = parseFloat(document.getElementById('car-select').value);
-    state.carPayment = calculateMonthlyPayment(carPrincipal, 0.045, 5);
+    let principal = parseFloat(document.getElementById('car-principal').value);
+    state.carPay = principal > 0 ? (principal * (0.00375 * Math.pow(1.00375, 60)) / (Math.pow(1.00375, 60) - 1)) : 0;
 
     document.getElementById('setup-screen').classList.add('hidden');
     document.getElementById('sim-screen').classList.remove('hidden');
-    log(`Game Started. Career: ${state.job.name}.`);
+    state.history.push({ bank: state.bank, happy: state.happiness });
+    renderChoices();
     updateUI();
 });
 
-function log(msg) {
-    eventLog.innerHTML = `> Month ${state.month}: ${msg}<br>` + eventLog.innerHTML;
+function renderChoices() {
+    const container = document.getElementById('choices-container');
+    container.innerHTML = '';
+    // Pick 4 random options each month
+    const shuffled = extraChoices.sort(() => 0.5 - Math.random()).slice(0, 4);
+    shuffled.forEach(choice => {
+        container.innerHTML += `
+            <div class="choice-item">
+                <input type="checkbox" class="monthly-opt" data-cost="${choice.cost}" data-happy="${choice.happy}">
+                <div><strong>${choice.text}</strong><br><span class="small">$${choice.cost} | +${choice.happy} Mood</span></div>
+            </div>`;
+    });
 }
 
 function updateUI() {
-    document.getElementById('bank-balance').textContent = `$${state.bank.toFixed(2)}`;
-    document.getElementById('debt-balance').textContent = `$${state.debt.toFixed(2)}`;
+    document.getElementById('bank-balance').textContent = `$${Math.round(state.bank)}`;
+    document.getElementById('debt-balance').textContent = `$${Math.round(state.debt)}`;
     document.getElementById('happiness-bar').style.width = `${state.happiness}%`;
-    document.getElementById('month-display').textContent = `Month ${state.month}`;
+    document.getElementById('month-display').textContent = `Month ${state.month} / 24`;
+    
+    let net = state.job.gross * (1 - state.job.tax);
+    document.getElementById('income-display').textContent = `$${Math.round(net)}`;
+
+    if (state.happiness < 30) document.getElementById('happiness-bar').style.background = 'var(--danger)';
+    else document.getElementById('happiness-bar').style.background = 'var(--success)';
 }
 
 document.getElementById('next-month-btn').addEventListener('click', () => {
-    // 1. Income
+    if (state.month >= 24) return;
+
     let netIncome = state.job.gross * (1 - state.job.tax);
+    let monthlyBills = state.housing + state.carPay + 400; // 400 = base food/utilities
+    
+    // Calculate chosen extras
+    let extraCost = 0;
+    let extraHappy = 0;
+    document.querySelectorAll('.monthly-opt:checked').forEach(el => {
+        extraCost += parseFloat(el.getAttribute('data-cost'));
+        extraHappy += parseFloat(el.getAttribute('data-happy'));
+    });
+
+    // Financial Logic
     state.bank += netIncome;
+    state.bank -= (monthlyBills + extraCost);
+    state.totalEarned += netIncome;
+    state.totalSpent += (monthlyBills + extraCost);
 
-    // 2. Expenses
-    let food = parseFloat(document.getElementById('food-choice').value);
-    let totalOut = state.housing + state.carPayment + state.fixedCosts + food;
-    state.bank -= totalOut;
-
-    // 3. Debt Logic (Compound Interest)
+    // Debt & Interest
     if (state.bank < 0) {
         state.debt += Math.abs(state.bank);
         state.bank = 0;
-        log(`<span class="danger">Overdraft! Debt increased to $${state.debt.toFixed(2)}</span>`);
     }
-
+    
     if (state.debt > 0) {
-        state.debt *= 1.02; // 2% Monthly Interest (approx 24% APR)
-        state.happiness -= 5;
+        state.debt *= 1.018; // 1.8% monthly interest
+        state.happiness -= 8; // Debt Stress Penalty
+        log(`<span class="danger-text">Interest added to debt. Stress is rising.</span>`);
     }
 
-    // 4. Random Events
-    const events = [
-        { text: "Your car needs a new battery. Pay $150.", impact: -150, h: -5 },
-        { text: "Birthday money from Grandma! +$100.", impact: 100, h: 10 },
-        { text: "Steam Sale! You bought 5 games you won't play. -$60.", impact: -60, h: 15 },
-        { text: "Minor illness. Doctor co-pay: -$50.", impact: -50, h: -10 }
-    ];
-    let ev = events[Math.floor(Math.random() * events.length)];
-    state.bank += ev.impact;
-    state.happiness += ev.h;
-    log(ev.text);
+    // Happiness Logic
+    state.happiness += extraHappy;
+    state.happiness -= 5; // Natural monthly "grind" fatigue
+    
+    // Random Life Event
+    if (Math.random() > 0.7) {
+        const events = [
+            { t: "Emergency Room Visit", c: 500, h: -15 },
+            { t: "Found $50 in laundry", c: -50, h: 5 },
+            { t: "Car Repair", c: 300, h: -10 }
+        ];
+        let e = events[Math.floor(Math.random() * events.length)];
+        state.bank -= e.c;
+        state.happiness += e.h;
+        log(`EVENT: ${e.t} (-$${e.c})`);
+    }
 
-    // Caps
     state.happiness = Math.max(0, Math.min(100, state.happiness));
     state.month++;
-    updateUI();
+
+    if (state.month > 24) {
+        showFinalResults();
+    } else {
+        renderChoices();
+        updateUI();
+        log(`Month ${state.month-1} complete.`);
+    }
 });
+
+function log(m) {
+    const logBox = document.getElementById('event-log');
+    logBox.innerHTML = `> ${m}<br>` + logBox.innerHTML;
+}
+
+function showFinalResults() {
+    document.getElementById('sim-screen').classList.add('hidden');
+    document.getElementById('results-screen').classList.remove('hidden');
+    
+    const score = (state.bank - state.debt) + (state.happiness * 100);
+    let rank = "Struggling";
+    if (score > 10000) rank = "Financial Master";
+    else if (score > 5000) rank = "Stable & Happy";
+
+    document.getElementById('final-stats').innerHTML = `
+        <h3>Rank: ${rank}</h3>
+        <p>Total Savings: $${Math.round(state.bank)}</p>
+        <p>Total Debt: $${Math.round(state.debt)}</p>
+        <p>Final Happiness: ${state.happiness}%</p>
+        <p>Net Worth: $${Math.round(state.bank - state.debt)}</p>
+    `;
+}
