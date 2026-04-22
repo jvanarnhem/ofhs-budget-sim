@@ -3,79 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adulting 101: The Financial Sim</title>
+    <title>Adulting 2.0: The 24-Month Challenge</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div id="game-container">
         <header>
-            <h1>Adulting 101 <span id="month-display">Month 1</span></h1>
+            <div class="top-nav">
+                <h2 id="month-display">Month 1 / 24</h2>
+                <div id="happiness-zone">
+                    <span>Mood:</span>
+                    <div class="progress-bg"><div id="happiness-bar"></div></div>
+                </div>
+            </div>
             <div class="stats-bar">
-                <div class="stat-box">
-                    <label>Bank Account</label>
-                    <div id="bank-balance">$0</div>
-                </div>
-                <div class="stat-box">
-                    <label>Credit Card Debt</label>
-                    <div id="debt-balance" class="danger">$0</div>
-                </div>
-                <div class="stat-box">
-                    <label>Happiness</label>
-                    <div class="progress-bg"><div id="happiness-bar" style="width: 100%;"></div></div>
-                </div>
+                <div class="stat-box">Bank: <span id="bank-balance">$0</span></div>
+                <div class="stat-box">Debt: <span id="debt-balance">$0</span></div>
+                <div class="stat-box">Net Income: <span id="income-display">$0</span></div>
             </div>
         </header>
 
         <main id="setup-screen">
-            <section class="card">
-                <h2>1. Choose Your Career</h2>
+            <div class="card">
+                <h3>Select Profession & Lifestyle</h3>
+                <label>Career:</label>
                 <select id="career-select"></select>
-                <div id="career-info"></div>
-            </section>
-
-            <section class="card">
-                <h2>2. Living Situation</h2>
+                
+                <label>Housing:</label>
                 <select id="housing-select">
-                    <option value="2200" data-happy="20">Luxury Studio Apartment ($2,200)</option>
-                    <option value="1400" data-happy="10">Modest 1-Bedroom ($1,400)</option>
-                    <option value="800" data-happy="0">Room with 3 Roommates ($800)</option>
-                    <option value="0" data-happy="-20">Parents' Basement ($0)</option>
+                    <option value="2000" data-h="20">Studio Apt ($2,000)</option>
+                    <option value="900" data-h="5">Shared House ($900)</option>
+                    <option value="0" data-h="-15">Parents ($0)</option>
                 </select>
-            </section>
 
-            <section class="card">
-                <h2>3. Transportation</h2>
-                <select id="car-select">
-                    <option value="45000" data-happy="25">New Electric Vehicle ($45k Loan)</option>
-                    <option value="25000" data-happy="10">Used Reliable Sedan ($25k Loan)</option>
-                    <option value="5000" data-happy="-5">"The Beater" ($5k Cash/Loan)</option>
-                    <option value="100" data-happy="0">Public Transit Pass ($100/mo)</option>
-                </select>
-            </section>
-
-            <button id="start-btn">Start My Adult Life</button>
+                <label>Car Loan (Principal):</label>
+                <input type="number" id="car-principal" value="20000" step="1000">
+                <p class="small">4.5% APR / 5 Year Term</p>
+                
+                <button id="start-btn">Begin Simulation</button>
+            </div>
         </main>
 
         <main id="sim-screen" class="hidden">
-            <div class="action-grid">
-                <div class="card">
-                    <h3>Monthly Fixed Costs</h3>
-                    <ul id="bill-list"></ul>
+            <div class="game-grid">
+                <div class="card" id="decisions-card">
+                    <h3>Monthly Opportunities</h3>
+                    <p>Choose your extras for this month:</p>
+                    <div id="choices-container">
+                        </div>
                 </div>
+
                 <div class="card">
-                    <h3>Lifestyle Choices</h3>
-                    <label>Food Plan:</label>
-                    <select id="food-choice">
-                        <option value="300" data-happy="0">Ramen & Home Cooking ($300)</option>
-                        <option value="600" data-happy="15">Balanced/Groceries ($600)</option>
-                        <option value="1000" data-happy="30">Dining Out/Delivery ($1,000)</option>
-                    </select>
+                    <h3>Financial Ledger</h3>
+                    <div id="ledger-details" class="small"></div>
                 </div>
             </div>
             
-            <button id="next-month-btn">Next Month 🎲</button>
+            <button id="next-month-btn">Finalize Month</button>
             <div id="event-log"></div>
+        </main>
+
+        <main id="results-screen" class="hidden">
+            <div class="card">
+                <h1>24-Month Retrospective</h1>
+                <div id="final-stats"></div>
+                <button onclick="location.reload()">Try Again</button>
+            </div>
         </main>
     </div>
 
